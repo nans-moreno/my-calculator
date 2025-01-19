@@ -59,10 +59,15 @@ def main():
             partial_result = calculate(number1, number2, symbol1)
             if partial_result is not None:
                 result = calculate(partial_result, number3, symbol2)
-        else:
+        elif symbol2 in ["*", "/","^", "%"] and symbol1 in ["+", "-"]:
             partial_result = calculate(number2, number3, symbol2)
             if partial_result is not None:
                 result = calculate(number1, partial_result, symbol1)
+        else:
+            partial_result = calculate(number1, number2, symbol1)
+            if partial_result is not None:
+                result = calculate(partial_result, number3, symbol2)
+            
     else:
         result = calculate(number1, number2, symbol1)
 

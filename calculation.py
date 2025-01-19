@@ -1,68 +1,72 @@
-# import keyboard
-# import threading
+def get_number(form, number_entry):
+    while True:
+        try:
+            if form == "i":
+                return int(input(number_entry))
+            elif form == "d":
+                return float(input(number_entry))
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
 
-def number_entry():
-    form = input("Do you need to use intergers or decimals (i:d)")
-    if form == "i":
-        number1 = int(input("Enter your first number:"))
-        number2 = int(input("Enter the second number:"))
-    elif form == "d" :
-        number1 = float(input("Enter your first number :"))
-        number2 = float(input("Enter your second number :"))
-    return number1, number2
+def get_symbol(symbol_entry):
+    while True:
+        symbol = input(symbol_entry)
+        if symbol in ["+", "-", "*", "/", "^", "%"]:
+            return symbol
+        print("Invalid symbol. Please enter one of (+, -, *, /, ^, %).")
 
-def symbol_entry():
-    symbol = input("Enter the type of calculation you want to do (+,-,*,/):")
-    if symbol != "+" and symbol !="-" and symbol !="*" and symbol !="/":
-        print("Invalid symbol, try again !")
-    return symbol
-
-def calcul(number1,number2,symbol):
-    if symbol == "+":
-        result = number1 + number2
-    elif symbol == "-":
-        result = number1 - number2
-    elif symbol == "*":
-        result = number1 * number2
-    elif symbol == "/" and number2 != 0 :
-        result = number1 / number2
-    elif number2 == 0 :
-        print("Division with 0 impossible !")
-    return result
-
-# def history(number1,number2,symbol,result):
-#     with open("historycalculator.txt", "r",encoding="utf8") as f :
-#         text = f.read()
-#     with open("historycalculator.txt", "w", encoding="utf8") as f:
-#             new_entry = f"{number1} {symbol} {number2} = {result}\n"
-#             f.write(new_entry + text)
-    
-# def display_history():
-#     with open("historycalculator.txt", "r",encoding="utf8") as f :
-#         text = f.read()
-#     print(text)
-
-# def reset_history():
-#     with open("historycalculator.txt","w",encoding="utf8") as f :
-#         f.write("")
-
-# def keypress():
-#     # while True:
-#     key=keyboard.read_event()
-#     if key.event_type == "down":
-#         if key.name == "a":
-#             display_history()
-#         elif key.name == "r":
-#             reset_history()
+def calculate(number1, number2, symbol):
+    try:
+        if symbol == "+":
+            return number1 + number2
+        elif symbol == "-":
+            return number1 - number2
+        elif symbol == "*":
+            return number1 * number2
+        elif symbol == "/":
+            return number1 / number2
+        elif symbol == "^":
+            return number1 ^ number2
+        elif symbol == "%":
+            return number1 % number2
+    except ZeroDivisionError:
+        print("Division by zero is not allowed.")
+        return None
 
 def main():
+
     while True:
-        number1,number2=number_entry()
-        symbol=symbol_entry()
-        result=calcul(number1,number2,symbol)
-        print(result)
-        # history(number1, number2, symbol, result)
-        # display_history()
-# threading.Thread(target=keypress, daemon=True)
+        form = input("Do you want to use integers or decimals? (i/d): ").lower()
+        if form in ["i", "d"]:
+            break
+        print("Invalid choice. Please enter 'i' for integers or 'd' for decimals.")
+
+    while True:
+        quantity = input("Do you want to input 2 or 3 numbers? (2/3): ")
+        if quantity in ["2", "3"]:
+            break
+        print("Invalid choice. Please enter '2' or '3'.")
+
+    number1 = get_number(form, "Enter your first number: ")
+    symbol1 = get_symbol("Enter the type of calculation (+, -, *, /, ^, %): ")
+    number2 = get_number(form, "Enter your second number: ")
+
+    if quantity == "3":
+        symbol2 = get_symbol("Enter the second type of calculation (+, -, *, /, ^, %): ")
+        number3 = get_number(form, "Enter your third number: ")
+
+        if symbol1 in ["*", "/","^", "%"] and symbol2 in ["+", "-"]:
+            partial_result = calculate(number1, number2, symbol1)
+            if partial_result is not None:
+                result = calculate(partial_result, number3, symbol2)
+        else:
+            partial_result = calculate(number2, number3, symbol2)
+            if partial_result is not None:
+                result = calculate(number1, partial_result, symbol1)
+    else:
+        result = calculate(number1, number2, symbol1)
+
+    if result is not None:
+        print(f"The result is: {result}")
 
 main()

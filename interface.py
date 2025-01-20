@@ -1,47 +1,96 @@
-def number_entry():
-    form = input("Do you need to use integers or decimals (i/d)? ")
-    if form == "i":
+def get_number(number_entry):
+    while True:
         try:
-            number1 = int(input("Enter your first number: "))
-            number2 = int(input("Enter the second number: "))
+            return float(input(number_entry))
         except ValueError:
-            print("Please enter only numbers.")
-            return number_entry()
-    elif form == "d":
-        try:
-            number1 = float(input("Enter your first number: "))
-            number2 = float(input("Enter the second number: "))
-        except ValueError:
-            print("Please enter only numbers.")
-            return number_entry()
-    else:
-        print("Invalid input. Please enter 'i' for integers or 'd' for decimals.")
-        return number_entry()
-    return number1, number2
+            print("Invalid input. Please enter a valid number.")
 
-def symbol_entry():
-    symbol = input("Enter the type of calculation you want to do (+, -, *, /): ")
-    if symbol not in ["+", "-", "*", "/"]:
-        print("Invalid symbol. Please enter one of the following: +, -, *, /")
-        return symbol_entry()
-    return symbol
+def get_symbol(symbol_entry):
+    while True:
+        symbol = input(symbol_entry)
+        if symbol in ["+", "-", "*", "/", "^", "%"]:
+            return symbol
+        print("Invalid symbol. Please enter one of (+, -, *, /, ^, %).")
 
-def calcul(number1, number2, symbol):
-    if symbol == "+":
-        print(f"{number1} + {number2} = {number1 + number2}")
-    elif symbol == "-":
-        print(f"{number1} - {number2} = {number1 - number2}")
-    elif symbol == "*":
-        print(f"{number1} * {number2} = {number1 * number2}")
-    elif symbol == "/":
-        if number2 != 0:
-            print(f"{number1} / {number2} = {number1 / number2}")
-        else:
-            print("Division by zero is not allowed!")
+def calculate(number1, number2, symbol):
+    try:
+        if symbol == "+":
+            return number1 + number2
+        elif symbol == "-":
+            return number1 - number2
+        elif symbol == "*":
+            return number1 * number2
+        elif symbol == "/":
+            return number1 / number2
+        elif symbol == "^":
+            return number1 ** number2
+        elif symbol == "%":
+            return number1 % number2
+    except ZeroDivisionError:
+        print("Division by zero is not allowed.")
+        return None
+
+def display_menu():
+    print("\nMenu:")
+    print("1. Open history")
+    print("2. Clear")
+    print("3. Close history")
+    print("4. Quit the program")
+    print("5. Perform a new calculation")
 
 def main():
-    number1, number2 = number_entry()
-    symbol = symbol_entry()
-    calcul(number1, number2, symbol)
+    while True:
+        display_menu()
+        choice = input("Choose an option (1-5): ")
+
+        if choice == "1":
+            print("Open history selected.")
+
+        elif choice == "2":
+            print("Clear selected.")
+
+        elif choice == "3":
+            print("Close history selected.")
+
+        elif choice == "4":
+            print("Quit the program.")
+            break
+
+        elif choice == "5":
+            while True:
+                quantity = input("Do you want to input 2 or 3 numbers? (2/3): ")
+                if quantity in ["2", "3"]:
+                    break
+                print("Invalid choice. Please enter '2' or '3'.")
+
+            number1 = get_number("Enter your first number: ")
+            symbol1 = get_symbol("Enter the type of calculation (+, -, *, /, ^, %): ")
+            number2 = get_number("Enter your second number: ")
+
+            if quantity == "3":
+                symbol2 = get_symbol("Enter the second type of calculation (+, -, *, /, ^, %): ")
+                number3 = get_number("Enter your third number: ")
+
+                if symbol1 in ["*", "/", "^", "%"] and symbol2 in ["+", "-"]:
+                    partial_result = calculate(number1, number2, symbol1)
+                    if partial_result is not None:
+                        result = calculate(partial_result, number3, symbol2)
+                elif symbol2 in ["*", "/", "^", "%"] and symbol1 in ["+", "-"]:
+                    partial_result = calculate(number2, number3, symbol2)
+                    if partial_result is not None:
+                        result = calculate(number1, partial_result, symbol1)
+                else:
+                    partial_result = calculate(number1, number2, symbol1)
+                    if partial_result is not None:
+                        result = calculate(partial_result, number3, symbol2)
+
+            else:
+                result = calculate(number1, number2, symbol1)
+
+            if result is not None:
+                print(f"The result is: {result}")
+
+        else:
+            print("Invalid choice. Please enter a valid option.")
 
 main()
